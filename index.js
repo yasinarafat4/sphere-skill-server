@@ -25,7 +25,20 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
+
+    // Collections
+    const coursesCollection = client.db("sphereSkillDB").collection("courses");
+    const instructorsCollection = client.db("sphereSkillDB").collection("instructors");
+
+    // Getting all courses API
+    app.get("/courses", async (req, res) => {
+      const result = await coursesCollection.find().toArray();
+      res.send(result);
+    });
+
+   
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -33,7 +46,7 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
