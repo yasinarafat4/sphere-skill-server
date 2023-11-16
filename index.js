@@ -29,7 +29,9 @@ async function run() {
 
     // Collections
     const coursesCollection = client.db("sphereSkillDB").collection("courses");
-    const instructorsCollection = client.db("sphereSkillDB").collection("instructors");
+    const instructorsCollection = client
+      .db("sphereSkillDB")
+      .collection("instructors");
 
     // Getting all courses API
     app.get("/courses", async (req, res) => {
@@ -37,7 +39,11 @@ async function run() {
       res.send(result);
     });
 
-   
+    // Getting all instructors API
+    app.get("/instructors", async (req, res) => {
+      const result = await instructorsCollection.find().toArray();
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
