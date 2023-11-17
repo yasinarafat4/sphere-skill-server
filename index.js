@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Database codes start
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qx5eerd.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -36,6 +36,29 @@ async function run() {
     // Getting all courses API
     app.get("/courses", async (req, res) => {
       const result = await coursesCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Getting single course data
+    app.get("/courses/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await coursesCollection.findOne(query);
+      res.send(result);
+    });
+
+    // search for courses
+    app.get("/courseSearch/:text", async (req, res) => {
+      const searchText = req.params.text;
+      const result = await coursesCollection
+        .find({
+          $or: [
+            { category: { $regex: searchText, $options: "i" } },
+            { name: { $regex: searchText, $options: "i" } },
+            { instructor_name: { $regex: searchText, $options: "i" } },
+          ],
+        })
+        .toArray();
       res.send(result);
     });
 
